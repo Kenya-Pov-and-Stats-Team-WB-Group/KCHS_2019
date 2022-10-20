@@ -410,7 +410,7 @@ foreach a of local agebr {
 *XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 **Absolute poverty
 dis in red "Get MI consistent SE for the ABSOLUTE POVERTY FGTs"
-local level adq //hh  pop  //for each analysis level. comment out the type of weights you don't want to use (remember: the more type of weights, the more the computational time)
+local level adq hh  pop  //for each analysis level. comment out the type of weights you don't want to use (remember: the more type of weights, the more the computational time)
 local fgt 0 1 2
 foreach l of local level {
 	foreach m of local fgt {
@@ -471,7 +471,7 @@ foreach l of local level {
 
 **Food poverty
 dis in red "Get MI consistent SE for the FOOD POVERTY FGTs"
-local level adq //hh pop //for each analysis level
+local level hh pop adq //for each analysis level
 local fgt 0 1 2
 foreach l of local level {
 		foreach m of local fgt {
@@ -532,7 +532,7 @@ foreach l of local level {
 }
 **Hardcore poverty
 dis in red "Get MI consistent SE for the HARCORE POVERTY FGTs"
-local level adq //hh pop //for each analysis level
+local level hh pop adq //for each analysis level
 local fgt 0 1 2
 foreach l of local level {
 		foreach m of local fgt {
