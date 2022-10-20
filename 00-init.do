@@ -38,7 +38,7 @@ global gsdTemp = "${swdLocal}/Temp"
 global gsdOutput = "${swdLocal}/Output"
 global gsdDo = "${swdLocal}/Do"
 
-local dir gsdDataRaw Temp Output Do
+local dir Rawinput Temp Output Do
 foreach d of local dir {
 	confirmdir "${swdLocal}/`d'"
 	 if _rc!=0 {
@@ -47,9 +47,10 @@ foreach d of local dir {
 }
 
 if (inlist("${suser}","wb562201","WB562201")) {
-	gsdDataRaw_imp
-	qui filelist, dir("${gsdDataRaw_imp}") pat("*.dta") //list files in a monthly folder
-
-	file
-	copy gsdDataRaw_imp gsdDataRaw
+	qui filelist, dir("${gsdDataRaw_imp}") pat("*.dta") //list files in folder
+	drop if regexm(dirname,"Labor")
+	qui levelsof filename,local(files) //store their names in local
+	foreach f of local files {
+		qui copy "${gsdDataRaw_imp}/`f'" "${gsdTemp}/`f'", replace
+	}
 }
