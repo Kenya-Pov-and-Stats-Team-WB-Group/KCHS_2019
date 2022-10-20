@@ -3,7 +3,7 @@ clear all
 set max_memory .
 
 use "${gsdDataRaw}/mi-imp.dta", clear
-drop weight weight_pop weight_adq
+drop weight weight_pop
 rename (weight_hh_resid_prur weight_pop_resid_prur) (weight_hh weight_pop)
 rename resid_prur resid 
 
@@ -17,7 +17,6 @@ gen nat=1
 preserve 
 use "${gsdDataRaw}/2019_KCHSP_individual_level.dta", clear 
 replace b05_years=2019-b05_years if b05_years>120 & !mi(b05_years)
-bys clid hhid: egen ctry_adq=sum(adq_scale)
 *Flag individuals by age brackets
 gen yrs05=inrange(b05_years,0,5)
 gen yrs613=inrange(b05_years,6,13)
@@ -26,6 +25,7 @@ gen yrs017=inrange(b05_years,0,17)
 gen yrs1835=inrange(b05_years,18,35)
 gen yrs3659=inrange(b05_years,36,59)
 gen yrs6069=inrange(b05_years,60,69)
+
 qui summ b05_years,d
 gen yrs70plus=inrange(b05_years,70,`r(max)')
 
@@ -40,12 +40,19 @@ foreach a of local agebr {
 	gen hh_has_`a'=n_`a'>0 & !mi(n_`a')
 	drop n_`a'
 }
+lab var weight_yrs05 "Weight for age bracket 0-5 years"
+lab var weight_yrs613 "Weight for age bracket 6-13 years"
+lab var weight_yrs1417 "Weight for age bracket 14-17 years"
+lab var weight_yrs017 "Weight for age bracket 0-17 years"
+lab var weight_yrs1835 "Weight for age bracket 18-35 years"
+lab var weight_yrs3659 "Weight for age bracket 36-59 years"
+lab var weight_yrs6069 "Weight for age bracket 60-69 years"
+lab var weight_yrs70plus "Weight for age bracket 70+ years"
+
 duplicates drop clid hhid, force
-qui savesome clid hhid weight_yrs05- hh_has_yrs70plus ctry_adq using "${gsdTemp}/child_weights.dta", replace
+qui savesome clid hhid weight_yrs05- hh_has_yrs70plus using "${gsdTemp}/child_weights.dta", replace
 restore
 merge m:1 clid hhid using "${gsdTemp}/child_weights.dta", keep(match) nogen assert(match)
-
-gen weight_adq=ctry_adq* weight_hh
 
 *Generate consumption quintiles
 qui xtile cons_qtile=cons, n(5)
