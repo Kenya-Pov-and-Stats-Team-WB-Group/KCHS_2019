@@ -31,7 +31,6 @@ gen yrs70plus=inrange(b05_years,70,`r(max)')
 
 merge m:m clid hhid using "${gsdDataRaw}/mi-imp.dta", keepusing(weight_hh_resid_prur) nogen keep(match) assert(match)
 rename weight_hh_resid_prur weight
-gen weight_adq=weight*ctry_adq
 
 *Approach with age-bracket-specific weights
 local agebr yrs05 yrs613 yrs1417 yrs017 yrs1835 yrs3659 yrs6069 yrs70plus
@@ -42,9 +41,11 @@ foreach a of local agebr {
 	drop n_`a'
 }
 duplicates drop clid hhid, force
-qui savesome clid hhid weight_yrs05- hh_has_yrs70plus weight_adq using "${gsdTemp}/child_weights.dta", replace
+qui savesome clid hhid weight_yrs05- hh_has_yrs70plus ctry_adq using "${gsdTemp}/child_weights.dta", replace
 restore
 merge m:1 clid hhid using "${gsdTemp}/child_weights.dta", keep(match) nogen assert(match)
+
+gen weight_adq=ctry_adq* weight_hh
 
 *Generate consumption quintiles
 qui xtile cons_qtile=cons, n(5)
@@ -593,6 +594,11 @@ qui filelist, dir("${gsdTemp}/") pat("*.dta") //list files
 qui levelsof filename if regexm(filename,"_yrs"),local(filestodelete) 
 foreach f of local filestodelete {
 	erase "$gsdTemp/`f'"	
+}
+qui filelist, dir("${gsdDo}/") pat("*.dta") //list files 
+qui levelsof filename,local(filestodelete) 
+foreach f of local filestodelete {
+	erase "$gsdDo/`f'"	
 }
 
 *Contribution to poverty 
