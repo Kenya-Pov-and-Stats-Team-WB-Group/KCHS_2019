@@ -15,7 +15,7 @@ gen nat=1
 
 *Generate age-bracket specific weights 
 preserve 
-use "${gsdDataRaw}/hhm.dta", clear 
+use "${gsdDataRaw}/2019_KCHSP_individual_level.dta", clear 
 replace b05_years=2019-b05_years if b05_years>120 & !mi(b05_years)
 bys clid hhid: egen ctry_adq=sum(adq_scale)
 *Flag individuals by age brackets
