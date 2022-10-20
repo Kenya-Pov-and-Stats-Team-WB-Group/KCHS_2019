@@ -51,6 +51,6 @@ if (inlist("${suser}","wb562201","WB562201")) {
 	drop if regexm(dirname,"Labor")
 	qui levelsof filename,local(files) //store their names in local
 	foreach f of local files {
-		qui copy "${gsdDataRaw_imp}/`f'" "${gsdTemp}/`f'", replace
+		qui copy "${gsdDataRaw_imp}/`f'" "${gsdDataRaw}/`f'", replace
 	}
 }
