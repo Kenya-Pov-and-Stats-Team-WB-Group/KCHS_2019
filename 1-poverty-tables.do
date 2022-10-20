@@ -132,6 +132,8 @@ foreach d of local dimensions {
 }
 
 qui save "${gsdTemp}/consagg_adept.dta", replace 
+duplicates drop clid hhid, force 
+qui savesome clid hhid weight_hh weight_pop weight_adq using "${gsdTemp}/weight_hh_pop_adq.dta",replace
 
 ***Get Multiple imputation consistent standard errors for the FGTs
 use "${gsdDataRaw}/mi-imp-wide.dta", clear
@@ -151,8 +153,8 @@ use "${gsdDataRaw}/mi-imp-wide.dta", clear
 *qui mi passive: gen hc_fgt2 = hc_fgt1^2
 
 merge m:1 clid hhid using "${gsdTemp}/child_weights.dta", keep(match) nogen assert(match) //merge child specific weights 
-merge m:1 clid hhid using "${gsdDataRaw}/weight_adq.dta", keep(match) assert(match) nogen
-rename weight weight_hh
+drop weight weight_pop weight_pop_resid_prur weight_hh_resid_prur weight_adq
+merge m:1 clid hhid using "${gsdTemp}/weight_hh_pop_adq.dta", keep(match) assert(match) nogen keepusing(weight_hh weight_pop weight_adq)
 
 qui save "${gsdDataRaw}/mi-imp-allstats.dta", replace
 
@@ -530,8 +532,9 @@ foreach l of local level {
 }
 **Hardcore poverty
 dis in red "Get MI consistent SE for the HARCORE POVERTY FGTs"
+local level adq //hh pop //for each analysis level
 local fgt 0 1 2
-foreach l in adq //pop hh {
+foreach l of local level {
 		foreach m of local fgt {
 		if  `m'==0 {
 			local column = "P"			
@@ -580,7 +583,7 @@ foreach l in adq //pop hh {
 		qui mi svyset clid [pw=weight_`l'], strata(strata) singleunit(centered)
 		*Two imputations (60 & 67 for Nairobi are constant (i.e. all zeros) these are excluded to allow for the construction of an SE)
 		if inrange(`k',1,46) {
-			mi estimate: svy: mean hc_fgt`m' 	
+			qui mi estimate: svy: mean hc_fgt`m' 	
 		}
 		else if  `k' == 47 {
 			qui mi estimate , imputations(1/59 61/66 68/100): svy: mean hc_fgt`m' if county ==47		
