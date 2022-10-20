@@ -15,7 +15,7 @@ gen _mi_miss=.
 mi unset
 ***FOOD
 dis in red "Contribution for FOOD poverty"
-local level hh pop adq //for each analysis level
+local level adq //hh pop  //for each analysis level
 foreach l of local level {
 	qui svyset clid [pw=weight_`l'],  strata(strat) singleunit(certainty) 
 	
@@ -77,7 +77,7 @@ foreach l of local level {
 
 ***ABSOLUTE
 dis in red "Contribution for ABSOLUTE poverty"
-local level hh pop adq //for each analysis level
+local level adq //hh pop  //for each analysis level
 foreach l of local level {
 	qui svyset clid [pw=weight_`l'],  strata(strat) singleunit(certainty)
 	
@@ -140,7 +140,7 @@ foreach l of local level {
 
 ***HARDCORE
 dis in red "Contribution for HARDCORE poverty"
-local level hh pop adq //for each analysis level
+local level adq //hh pop  //for each analysis level
 foreach l of local level {
 	qui svyset clid [pw=weight_`l'],  strata(strat) singleunit(certainty)
 	
