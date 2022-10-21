@@ -29,13 +29,17 @@ gen yrs6069=inrange(b05_years,60,69)
 qui summ b05_years,d
 gen yrs70plus=inrange(b05_years,70,`r(max)')
 
+local agebr yrs05 yrs613 yrs1417 yrs017 yrs1835 yrs3659 yrs6069 yrs70plus
+foreach a of local agebr {
+	bys clid hhid: egen n_`a'=total(`a')
+}
+
 merge m:m clid hhid using "${gsdDataRaw}/mi-imp.dta", keepusing(weight_hh_resid_prur) nogen keep(match) assert(match)
 rename weight_hh_resid_prur weight
 
 *Approach with age-bracket-specific weights
 local agebr yrs05 yrs613 yrs1417 yrs017 yrs1835 yrs3659 yrs6069 yrs70plus
 foreach a of local agebr {
-	bys clid hhid: egen n_`a'=total(`a')
 	gen weight_`a'=weight*n_`a'
 	gen hh_has_`a'=n_`a'>0 & !mi(n_`a')
 	drop n_`a'
