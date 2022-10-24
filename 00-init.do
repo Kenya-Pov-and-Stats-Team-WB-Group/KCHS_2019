@@ -32,6 +32,11 @@ else if (inlist("${suser}","Silas, or anyone else")){
 	*Local directory of your checked out copy of the code
 	global swdLocal = "Desktop location of the KCHS2019_povtables folder"
 }
+*Katra
+else if (inlist("${suser}","ADMIN")){	
+	*Local directory of your checked out copy of the code
+	global swdLocal = "C:\Users\ADMIN\Documents\KCHS 2019"
+}
 *Define filepaths
 global gsdDataRaw = "${swdLocal}/Rawinput"
 global gsdTemp = "${swdLocal}/Temp"
