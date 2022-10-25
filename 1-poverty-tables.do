@@ -628,12 +628,12 @@ lorenz  cons [pw=weight_hh]
 qui sumdist cons [aw=weight_pop] 
 dis in red "PR is " (1-`r(cush9)')/ `r(cush4)'
 inineq cons,hsize(hhsize) p1(.9) p2(1) p3(0) p4(0.4) index(sr)
-
+*/
 *Gini: Difference of 2 ppl randomly taken from distribution(i.e. mean difference delta) / mean income distribution. If =0 full equality; =100 full inequality (all goes to one person) 
-fastgini cons [pw=weight_hh]
+fastgini cons [pw=weight_pop]
 gen gini=.
 forval i=1/47 {
-	qui fastgini cons if county==`i' [pw=weight_hh]
+	qui fastgini cons if county==`i' [pw=weight_pop]
 	qui replace gini=`r(gini)' if county==`i'
 }
 assert !mi(gini)
